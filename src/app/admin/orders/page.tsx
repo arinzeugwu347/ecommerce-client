@@ -41,13 +41,18 @@ export default function AdminOrdersPage() {
         onConfirm: () => { },
     })
 
+    const [page, setPage] = useState(1)
     const queryClient = useQueryClient()
     const { currencySymbol } = useSettings()
 
-    const { data: orders = [], isLoading } = useQuery({
-        queryKey: ["admin-orders"],
-        queryFn: () => api.get("/orders").then(res => res.data),
+    const { data, isLoading } = useQuery({
+        queryKey: ["admin-orders", page, searchTerm],
+        queryFn: () => api.get(`/orders?pageNumber=${page}&keyword=${searchTerm}`).then(res => res.data),
     })
+
+    const orders = data?.orders || []
+    const pages = data?.pages || 1
+    const currentPage = data?.page || 1
 
     const deliverMutation = useMutation({
         mutationFn: (id: string) => api.put(`/orders/${id}/deliver`),
@@ -114,10 +119,7 @@ export default function AdminOrdersPage() {
         })
     }
 
-    const filteredOrders = orders.filter((order: any) =>
-        order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    const filteredOrders = orders
 
     const getStatusColor = (status: string) => {
         switch (status?.toLowerCase()) {
@@ -290,6 +292,6 @@ export default function AdminOrdersPage() {
                 onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
                 isLoading={deliverMutation.isPending || payMutation.isPending}
             />
-        </AdminLayout>
+        </AdminLayout >
     )
 }

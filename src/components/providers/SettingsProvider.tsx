@@ -30,6 +30,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         queryKey: ["admin-settings"],
         queryFn: () => api.get("/settings").then(res => res.data),
         staleTime: 1000 * 60 * 10, // 10 minutes
+        retry: false, // Prevent infinite loops if backend is down
     })
 
     if (!mounted || isLoading) {

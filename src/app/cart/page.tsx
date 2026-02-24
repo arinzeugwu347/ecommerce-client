@@ -6,6 +6,8 @@ import api from "@/lib/api"
 import { useCartStore, CartItem } from "@/store/cartStore"
 import { useEffect } from "react"
 import { useSettings } from "@/components/providers/SettingsProvider"
+import { useAuthStore } from "@/store/authStore"
+import { useRouter } from "next/navigation"
 
 interface CartResponse {
     items: CartItem[]
@@ -26,6 +28,8 @@ export default function CartPage() {
     const queryClient = useQueryClient()
     const { currencySymbol } = useSettings()
     const { items, updateQuantity, removeItem } = useCartStore()
+    const { isAuthenticated } = useAuthStore()
+    const router = useRouter()
     const isLoading = false // We can handle this better, but for now Navbar pre-fetches
 
     // Mutation for updating cart on backend
@@ -214,8 +218,19 @@ export default function CartPage() {
                                 <span>{currencySymbol}{subtotal.toFixed(2)}</span>
                             </div>
 
-                            <Button className="w-full bg-emerald-600 hover:bg-emerald-700" size="lg" asChild>
-                                <Link href="/checkout">Proceed to Checkout</Link>
+                            <Button
+                                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                                size="lg"
+                                onClick={() => {
+                                    if (!isAuthenticated) {
+                                        toast.error("Please login to proceed to checkout")
+                                        router.push("/login?redirect=/checkout")
+                                    } else {
+                                        router.push("/checkout")
+                                    }
+                                }}
+                            >
+                                Proceed to Checkout
                             </Button>
 
                             <p className="text-center text-sm text-muted-foreground">

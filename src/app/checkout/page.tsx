@@ -3,6 +3,8 @@
 
 import { useQueryClient } from "@tanstack/react-query"
 import { useCartStore } from "@/store/cartStore"
+import { useAuthStore } from "@/store/authStore"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -34,8 +36,21 @@ type CheckoutForm = z.infer<typeof checkoutSchema>
 export default function CheckoutPage() {
     const queryClient = useQueryClient()
     const { items, clearCart } = useCartStore()
+    const { isAuthenticated, mounted: authMounted } = useAuthStore()
     const { currencySymbol, taxRate, shippingThreshold, flatShippingRate } = useSettings()
     const router = useRouter()
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true)
+
+    useEffect(() => {
+        if (authMounted) {
+            if (!isAuthenticated) {
+                toast.error("Please login to proceed to checkout")
+                router.push("/login?redirect=/checkout")
+            } else {
+                setIsCheckingAuth(false)
+            }
+        }
+    }, [isAuthenticated, authMounted, router])
 
     const subtotal = items.reduce((sum, item) => {
         const price = item.priceAtAdd || item.product.price || 0
@@ -90,6 +105,17 @@ export default function CheckoutPage() {
                 description: errorMessage || "Please check your details and try again",
             })
         }
+    }
+
+    if (isCheckingAuth) {
+        return (
+            <div className="container mx-auto px-4 py-24 text-center">
+                <div className="flex flex-col items-center justify-center space-y-4">
+                    <div className="h-10 w-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-lg text-muted-foreground font-medium italic">Verifying your session...</p>
+                </div>
+            </div>
+        )
     }
 
     if (items.length === 0) {

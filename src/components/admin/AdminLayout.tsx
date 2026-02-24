@@ -8,9 +8,13 @@ import {
     ShoppingCart,
     Users,
     Settings,
-    ChevronRight
+    ChevronRight,
+    Hammer,
+    AlertCircle
 } from "lucide-react"
+import api from "@/lib/api" // Added api import
 import { cn } from "@/lib/utils"
+import { useSettings } from "@/components/providers/SettingsProvider" // Added useSettings import
 import AdminRoute from "./AdminRoute"
 
 const menuItems = [
@@ -22,16 +26,32 @@ const menuItems = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
+    const { maintenanceMode } = useSettings() // Added useSettings hook call
 
     return (
         <AdminRoute>
             <div className="flex min-h-[calc(100vh-4rem)] bg-background">
                 {/* Sidebar */}
-                <aside className="w-64 border-r bg-card/50 backdrop-blur-sm sticky top-16 h-[calc(100vh-4rem)]">
+                <aside className="hidden md:flex flex-col w-64 border-r bg-card h-screen sticky top-0 transition-all duration-300"> {/* Modified aside classes */}
+                    <div className="p-6 border-b flex items-center justify-between"> {/* Modified div inside aside */}
+                        <Link href="/admin/dashboard" className="flex items-center gap-2 font-bold text-xl tracking-tight">
+                            <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
+                                <Package className="h-5 w-5" />
+                            </div>
+                            <span>Admin</span>
+                        </Link>
+                    </div>
+
+                    {maintenanceMode && ( // Added maintenanceMode banner
+                        <div className="px-4 py-3 bg-amber-500/10 border-b border-amber-500/20">
+                            <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 text-xs font-semibold uppercase">
+                                <Hammer className="h-3 w-3" />
+                                Maintenance Active
+                            </div>
+                        </div>
+                    )}
+
                     <div className="p-6">
-                        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-                            Management
-                        </h2>
                         <nav className="space-y-1">
                             {menuItems.map((item) => {
                                 const isActive = pathname === item.href

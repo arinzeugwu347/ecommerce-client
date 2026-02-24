@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, keepPreviousData } from "@tanstack/react-query"
 import api from "@/lib/api"
 import AdminLayout from "@/components/admin/AdminLayout"
 import {
@@ -30,11 +30,13 @@ import { useTheme } from "next-themes"
 
 export default function AdminDashboardPage() {
     const [mounted, setMounted] = useState(false)
+    const [days, setDays] = useState("30")
     const { currencySymbol } = useSettings()
     const { theme, resolvedTheme } = useTheme()
-    const { data, isLoading } = useQuery({
-        queryKey: ["admin-stats"],
-        queryFn: () => api.get("/admin/stats").then(res => res.data),
+    const { data, isLoading, isFetching } = useQuery({
+        queryKey: ["admin-stats", days],
+        queryFn: () => api.get(`/admin/stats?days=${days}`).then(res => res.data),
+        placeholderData: keepPreviousData,
     })
 
     useEffect(() => {
@@ -67,23 +69,23 @@ export default function AdminDashboardPage() {
             value: `${currencySymbol}${Number(stats.sales || 0).toFixed(2)}`,
             icon: TrendingUp,
             color: "text-emerald-500",
-            trend: "+12.5%",
-            isPositive: true
+            trend: stats.salesTrend || "0%",
+            isPositive: stats.salesTrend?.startsWith('+')
         },
         {
             name: "Orders",
             value: stats.orders,
             icon: ShoppingCart,
             color: "text-blue-500",
-            trend: "+8.2%",
-            isPositive: true
+            trend: stats.ordersTrend || "0%",
+            isPositive: stats.ordersTrend?.startsWith('+')
         },
         {
             name: "Products",
             value: stats.products,
             icon: Package,
             color: "text-orange-500",
-            trend: "+3",
+            trend: "Total",
             isPositive: true
         },
         {
@@ -91,8 +93,8 @@ export default function AdminDashboardPage() {
             value: stats.users,
             icon: Users,
             color: "text-purple-500",
-            trend: "-2%",
-            isPositive: false
+            trend: stats.usersTrend || "0%",
+            isPositive: stats.usersTrend?.startsWith('+')
         },
     ]
 
@@ -131,15 +133,22 @@ export default function AdminDashboardPage() {
                     <div className="flex items-center justify-between mb-8">
                         <div>
                             <h2 className="text-lg font-semibold">Sales Analytics</h2>
-                            <p className="text-sm text-muted-foreground">Sales performance over the last 30 days</p>
+                            <p className="text-sm text-muted-foreground">Sales performance over the last {days} days</p>
                         </div>
-                        <select className="bg-background border rounded-lg px-3 py-2 text-sm">
-                            <option>Last 30 Days</option>
-                            <option>Last 7 Days</option>
+                        <select
+                            className="bg-background border rounded-lg px-3 py-2 text-sm"
+                            value={days}
+                            onChange={(e) => setDays(e.target.value)}
+                        >
+                            <option value="30">Last 30 Days</option>
+                            <option value="7">Last 7 Days</option>
                         </select>
                     </div>
 
-                    <div className="h-[350px] w-full min-h-[350px]">
+                    <div className={cn(
+                        "h-[350px] w-full min-h-[350px] transition-opacity duration-300",
+                        isFetching ? "opacity-30" : "opacity-100"
+                    )}>
                         {mounted && (
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={salesData}>
@@ -149,7 +158,7 @@ export default function AdminDashboardPage() {
                                             <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                                     <XAxis
                                         dataKey="date"
                                         stroke={resolvedTheme === 'dark' ? '#fff' : 'hsl(var(--muted-foreground))'}
@@ -175,13 +184,14 @@ export default function AdminDashboardPage() {
                                             borderRadius: '8px',
                                             fontSize: '12px'
                                         }}
+                                        labelStyle={{ color: resolvedTheme === 'dark' ? '#fff' : 'inherit' }}
                                         itemStyle={{ color: 'hsl(var(--primary))' }}
                                     />
                                     <Area
                                         type="monotone"
                                         dataKey="sales"
-                                        stroke="hsl(var(--primary))"
-                                        strokeWidth={2}
+                                        stroke="hsl(var(--primary)) dark:hsl(var(--primary-foreground))"
+                                        strokeWidth={3}
                                         fillOpacity={1}
                                         fill="url(#colorSales)"
                                     />

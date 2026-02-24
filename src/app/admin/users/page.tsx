@@ -34,12 +34,17 @@ export default function AdminUsersPage() {
         description: "",
         onConfirm: () => { },
     })
+    const [page, setPage] = useState(1)
     const queryClient = useQueryClient()
 
-    const { data: users = [], isLoading } = useQuery({
-        queryKey: ["admin-users"],
-        queryFn: () => api.get("/users").then(res => res.data),
+    const { data, isLoading } = useQuery({
+        queryKey: ["admin-users", page, searchTerm],
+        queryFn: () => api.get(`/users?pageNumber=${page}&keyword=${searchTerm}`).then(res => res.data),
     })
+
+    const users = data?.users || []
+    const pages = data?.pages || 1
+    const currentPage = data?.page || 1
 
     const updateRoleMutation = useMutation({
         mutationFn: ({ id, role }: { id: string, role: string }) => api.put(`/users/${id}`, { role }),
@@ -92,10 +97,7 @@ export default function AdminUsersPage() {
         })
     }
 
-    const filteredUsers = users.filter((user: any) =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    const filteredUsers = users
 
     return (
         <AdminLayout>
@@ -207,6 +209,27 @@ export default function AdminUsersPage() {
                                 ))}
                             </tbody>
                         </table>
+                        <div className="flex items-center justify-between p-6 border-t bg-muted/20">
+                            <div className="text-sm text-muted-foreground">
+                                Page {currentPage} of {pages}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1 || isLoading}
+                                    className="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-accent disabled:opacity-50 transition-colors"
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    onClick={() => setPage(prev => Math.min(prev + 1, pages))}
+                                    disabled={currentPage === pages || isLoading}
+                                    className="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-accent disabled:opacity-50 transition-colors"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

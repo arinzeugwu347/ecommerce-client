@@ -37,12 +37,13 @@ export default function AdminProductsPage() {
         description: "",
         onConfirm: () => { },
     })
+    const [page, setPage] = useState(1)
     const queryClient = useQueryClient()
     const { currencySymbol } = useSettings()
 
     const { data, isLoading } = useQuery({
-        queryKey: ["admin-products", searchTerm],
-        queryFn: () => api.get(`/products?keyword=${searchTerm}&pageSize=50`).then(res => res.data),
+        queryKey: ["admin-products", page, searchTerm],
+        queryFn: () => api.get(`/products?pageNumber=${page}&keyword=${searchTerm}&pageSize=10`).then(res => res.data),
     })
 
     const deleteMutation = useMutation({
@@ -69,6 +70,8 @@ export default function AdminProductsPage() {
     }
 
     const products = data?.products || []
+    const pages = data?.pages || 1
+    const currentPage = data?.page || 1
 
     return (
         <AdminLayout>
@@ -204,28 +207,50 @@ export default function AdminProductsPage() {
                                 )}
                             </tbody>
                         </table>
+                    </div> {/* End of overflow-x-auto */}
+
+                    <div className="flex items-center justify-between p-6 border-t bg-muted/20">
+                        <div className="text-sm text-muted-foreground">
+                            Page {currentPage} of {pages}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1 || isLoading}
+                                className="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-accent disabled:opacity-50 transition-colors"
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => setPage(prev => Math.min(prev + 1, pages))}
+                                disabled={currentPage === pages || isLoading}
+                                className="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-accent disabled:opacity-50 transition-colors"
+                            >
+                                Next
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div> {/* End of bg-card */}
 
-            {isFormOpen && (
-                <ProductForm
-                    product={selectedProduct}
-                    onClose={() => setIsFormOpen(false)}
-                    onSuccess={() => queryClient.invalidateQueries({ queryKey: ["admin-products"] })}
+                {isFormOpen && (
+                    <ProductForm
+                        product={selectedProduct}
+                        onClose={() => setIsFormOpen(false)}
+                        onSuccess={() => queryClient.invalidateQueries({ queryKey: ["admin-products"] })}
+                    />
+                )}
+
+                <ConfirmModal
+                    isOpen={confirmModal.isOpen}
+                    title={confirmModal.title}
+                    description={confirmModal.description}
+                    variant="danger"
+                    confirmText="Delete Product"
+                    onConfirm={confirmModal.onConfirm}
+                    onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                    isLoading={deleteMutation.isPending}
                 />
-            )}
-
-            <ConfirmModal
-                isOpen={confirmModal.isOpen}
-                title={confirmModal.title}
-                description={confirmModal.description}
-                variant="danger"
-                confirmText="Delete Product"
-                onConfirm={confirmModal.onConfirm}
-                onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
-                isLoading={deleteMutation.isPending}
-            />
+            </div> {/* End of space-y-8 */}
         </AdminLayout>
     )
 }
