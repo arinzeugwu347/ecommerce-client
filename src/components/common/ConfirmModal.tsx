@@ -55,7 +55,7 @@ export default function ConfirmModal({
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-[425px] p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
-                <div className="p-6">
+                <DialogHeader className="px-6 pt-6">
                     <div className="flex items-start gap-4">
                         <div className={cn(
                             "p-3 rounded-xl flex-shrink-0",
@@ -66,15 +66,13 @@ export default function ConfirmModal({
                             {getIcon()}
                         </div>
                         <div className="space-y-1">
-                            <DialogHeader>
-                                <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
-                                <DialogDescription className="text-base text-muted-foreground pt-1">
-                                    {description}
-                                </DialogDescription>
-                            </DialogHeader>
+                            <DialogTitle className="text-xl font-bold">{title}</DialogTitle>
+                            <DialogDescription className="text-base text-muted-foreground pt-1">
+                                {description}
+                            </DialogDescription>
                         </div>
                     </div>
-                </div>
+                </DialogHeader>
 
                 <DialogFooter className="bg-muted/50 p-4 gap-3 sm:gap-0">
                     <Button
