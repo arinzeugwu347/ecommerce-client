@@ -53,8 +53,11 @@ export default function CartPage() {
         onError: () => toast.error("Failed to remove item"),
     })
 
-    // Calculate subtotal
-    const subtotal = items.reduce((sum, item) => sum + item.quantity * Number(item.priceAtAdd || 0), 0)
+    // Calculate subtotal - filter out items with missing products
+    const subtotal = items.reduce((sum, item) => {
+        if (!item.product) return sum;
+        return sum + item.quantity * Number(item.priceAtAdd || 0);
+    }, 0)
 
     if (isLoading) {
         return (
@@ -108,8 +111,8 @@ export default function CartPage() {
             <div className="grid lg:grid-cols-3 gap-12">
                 {/* Cart Items */}
                 <div className="lg:col-span-2 space-y-6">
-                    {items.map((item) => (
-                        <Card key={item.product._id} className="overflow-hidden">
+                    {items.filter(item => item.product).map((item) => (
+                        <Card key={item.product?._id || Math.random()} className="overflow-hidden">
                             <CardContent className="p-0">
                                 <div className="flex flex-col sm:flex-row">
                                     {/* Image */}
@@ -144,6 +147,7 @@ export default function CartPage() {
                                                     className="h-8 w-8"
                                                     disabled={item.quantity <= 1}
                                                     onClick={() => {
+                                                        if (!item.product?._id) return;
                                                         updateCartMutation.mutate(
                                                             { productId: item.product._id, quantity: item.quantity - 1 },
                                                             {
@@ -161,8 +165,9 @@ export default function CartPage() {
                                                     variant="outline"
                                                     size="icon"
                                                     className="h-8 w-8"
-                                                    disabled={item.quantity >= item.product.countInStock}
+                                                    disabled={!item.product || item.quantity >= item.product.countInStock}
                                                     onClick={() => {
+                                                        if (!item.product?._id) return;
                                                         updateCartMutation.mutate(
                                                             { productId: item.product._id, quantity: item.quantity + 1 },
                                                             {
@@ -185,6 +190,7 @@ export default function CartPage() {
                                                     size="icon"
                                                     className="text-red-600 hover:text-red-700"
                                                     onClick={() => {
+                                                        if (!item.product?._id) return;
                                                         removeItemMutation.mutate(item.product._id, {
                                                             onSuccess: () => removeItem(item.product._id),
                                                         })
