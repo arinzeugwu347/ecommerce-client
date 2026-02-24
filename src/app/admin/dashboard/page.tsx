@@ -73,20 +73,20 @@ export default function AdminDashboardPage() {
             isPositive: stats.salesTrend?.startsWith('+')
         },
         {
-            name: "Orders",
+            name: "Paid Orders",
             value: stats.orders,
-            icon: ShoppingCart,
-            color: "text-blue-500",
+            icon: CheckCircle2,
+            color: "text-emerald-500",
             trend: stats.ordersTrend || "0%",
             isPositive: stats.ordersTrend?.startsWith('+')
         },
         {
-            name: "Products",
-            value: stats.products,
-            icon: Package,
-            color: "text-orange-500",
-            trend: "Total",
-            isPositive: true
+            name: "Pending Orders",
+            value: stats.pendingOrders,
+            icon: Clock,
+            color: "text-amber-500",
+            trend: "Awaiting Payment",
+            isPositive: false
         },
         {
             name: "Customers",
