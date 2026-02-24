@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
+import { useQuery } from "@tanstack/react-query"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { X, Upload, Loader2, Plus, Trash2 } from "lucide-react"
@@ -37,6 +38,11 @@ export default function ProductForm({ product, onClose, onSuccess }: ProductForm
     const [isUploadingMain, setIsUploadingMain] = useState(false)
     const [previewImages, setPreviewImages] = useState<string[]>(product?.images || [])
     const [mainImage, setMainImage] = useState<string>(product?.image || "")
+
+    const { data: categoriesData } = useQuery({
+        queryKey: ["admin-categories"],
+        queryFn: () => api.get("/categories").then(res => res.data),
+    })
 
     const {
         register,
@@ -247,13 +253,20 @@ export default function ProductForm({ product, onClose, onSuccess }: ProductForm
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Category</label>
-                            <input
+                            <select
                                 {...register("category")}
                                 className={cn(
-                                    "w-full bg-background border rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20",
+                                    "w-full bg-background border rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 appearance-none",
                                     errors.category ? "border-red-500" : "border-input"
                                 )}
-                            />
+                            >
+                                <option value="">Select a category</option>
+                                {categoriesData?.map((cat: any) => (
+                                    <option key={cat._id} value={cat.name}>
+                                        {cat.name}
+                                    </option>
+                                ))}
+                            </select>
                             {errors.category && <p className="text-xs text-red-500">{errors.category.message}</p>}
                         </div>
 
