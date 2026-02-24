@@ -53,6 +53,7 @@ export default function CheckoutPage() {
     }, [isAuthenticated, authMounted, router])
 
     const subtotal = items.reduce((sum, item) => {
+        if (!item.product) return sum;
         const price = item.priceAtAdd || item.product.price || 0
         return sum + (item.quantity * Number(price))
     }, 0)
@@ -272,13 +273,13 @@ export default function CheckoutPage() {
                             <CardTitle>Order Summary</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            {items.map((item) => (
-                                <div key={item.product._id} className="flex justify-between items-center">
+                            {items.filter(item => item.product).map((item) => (
+                                <div key={item.product?._id || Math.random()} className="flex justify-between items-center">
                                     <div className="flex items-center gap-3">
                                         <div className="relative w-12 h-12 rounded">
                                             <Image
-                                                src={item.product.image}
-                                                alt={item.product.name}
+                                                src={item.product?.image || ""}
+                                                alt={item.product?.name || "Product"}
                                                 className="object-cover rounded"
                                                 loading="eager"
                                                 fill
@@ -287,7 +288,7 @@ export default function CheckoutPage() {
 
                                         </div>
                                         <div>
-                                            <p className="font-medium line-clamp-1">{item.product.name}</p>
+                                            <p className="font-medium line-clamp-1">{item.product?.name || "Unknown Product"}</p>
                                             <p className="text-sm text-muted-foreground">
                                                 Qty: {item.quantity} × {currencySymbol}{Number(item.priceAtAdd || 0).toFixed(2)}
                                             </p>
