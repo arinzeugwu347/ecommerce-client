@@ -54,7 +54,7 @@ export default function CheckoutPage() {
 
     const subtotal = items.reduce((sum, item) => {
         if (!item.product) return sum;
-        const price = item.priceAtAdd || item.product.price || 0
+        const price = item.priceAtAdd || item.product?.price || 0
         return sum + (item.quantity * Number(price))
     }, 0)
     const shipping = subtotal > shippingThreshold ? 0 : flatShippingRate
