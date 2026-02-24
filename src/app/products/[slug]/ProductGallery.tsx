@@ -22,7 +22,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
     return (
         <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative group aspect-square rounded-2xl overflow-hidden border bg-muted shadow-sm cursor-zoom-in">
+            <div className="relative group aspect-square md:aspect-square sm:aspect-video rounded-2xl overflow-hidden border bg-muted shadow-sm cursor-zoom-in">
                 <Image
                     src={images[activeIndex]}
                     alt={`${name} - View ${activeIndex + 1}`}
@@ -41,21 +41,21 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
                     <>
                         <button
                             onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 backdrop-blur-sm border shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-background"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/90 backdrop-blur-sm border shadow-sm lg:opacity-0 lg:group-hover:opacity-100 transition-all hover:bg-background z-10"
                         >
                             <ChevronLeft className="h-5 w-5" />
                         </button>
                         <button
                             onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 backdrop-blur-sm border shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-background"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/90 backdrop-blur-sm border shadow-sm lg:opacity-0 lg:group-hover:opacity-100 transition-all hover:bg-background z-10"
                         >
                             <ChevronRight className="h-5 w-5" />
                         </button>
                     </>
                 )}
 
-                {/* Zoom Hint */}
-                <div className="absolute bottom-4 right-4 p-2 rounded-lg bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                {/* Zoom Hint - Hidden on touch */}
+                <div className="absolute bottom-4 right-4 p-2 rounded-lg bg-black/50 text-white lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hidden lg:block">
                     <Maximize2 className="h-4 w-4" />
                 </div>
             </div>

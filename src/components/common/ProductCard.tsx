@@ -47,10 +47,6 @@ const cardVariants: Variants = {
         scale: 1.03,
         transition: { duration: 0.25 },
     },
-    tap: {
-        scale: 0.98,
-        transition: { duration: 0.1 },
-    }
 }
 
 export default function ProductCard({ product, index = 0, className }: ProductCardProps) {
@@ -66,8 +62,8 @@ export default function ProductCard({ product, index = 0, className }: ProductCa
             initial="hidden"
             animate="visible"
             whileHover={typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches ? "hover" : undefined}
-            whileTap="tap"
             className={cn("h-full", className)}
+            style={{ willChange: "transform, opacity" }}
         >
             <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-800">
                 {/* Image */}

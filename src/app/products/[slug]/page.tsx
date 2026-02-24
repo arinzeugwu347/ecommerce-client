@@ -15,7 +15,7 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
-import api from "@/lib/api"
+import api, { API_BASE_URL } from "@/lib/api"
 import AddToCartButton from "@/components/common/AddToCartButton"
 import ProductReviewForm from "./ProductReviewForm"
 import ReviewItems from "./ReviewItems"
@@ -49,8 +49,11 @@ type Product = {
 // Server component - fetch data on server
 async function getProduct(slug: string): Promise<Product | null> {
     try {
-        const res = await api.get(`/products/${slug}`)
-        return res.data
+        const res = await fetch(`${API_BASE_URL}/api/products/${slug}`, {
+            next: { revalidate: 60 } // Cache for 60 seconds
+        })
+        if (!res.ok) return null
+        return res.json()
     } catch (error) {
         return null
     }
@@ -58,8 +61,11 @@ async function getProduct(slug: string): Promise<Product | null> {
 
 async function getSettings() {
     try {
-        const res = await api.get("/settings");
-        return res.data;
+        const res = await fetch(`${API_BASE_URL}/api/settings`, {
+            next: { revalidate: 3600 } // Cache settings for 1 hour
+        });
+        if (!res.ok) throw new Error('Failed to fetch settings');
+        return res.json();
     } catch (error) {
         return {
             storeName: "YourStore",
@@ -98,7 +104,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     const hasHalfStar = rating % 1 >= 0.5
 
     return (
-        <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="container mx-auto px-4 py-6 md:py-12">
             {/* Breadcrumbs */}
             <nav className="mb-8 text-sm text-muted-foreground">
                 <ol className="flex items-center gap-2">
@@ -110,12 +116,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 </ol>
             </nav>
 
-            <div className="grid lg:grid-cols-2 gap-12">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
                 {/* Image Gallery */}
                 <ProductGallery images={[image, ...images]} name={name} />
 
                 {/* Product Info */}
-                <div className="space-y-8">
+                <div className="space-y-6 md:space-y-8">
                     {/* Title & Category */}
                     <div>
                         <Badge variant="outline" className="mb-3 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
@@ -124,7 +130,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         {brand && (
                             <p className="text-sm text-muted-foreground mb-2">Brand: {brand}</p>
                         )}
-                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{name}</h1>
+                        <h1 className="text-2xl md:text-4xl font-bold tracking-tight">{name}</h1>
                     </div>
 
                     {/* Rating */}
@@ -154,7 +160,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
                     {/* Price */}
                     <div className="flex items-baseline gap-4">
-                        <span className="text-5xl font-bold text-emerald-600 dark:text-emerald-400">
+                        <span className="text-4xl md:text-5xl font-bold text-emerald-600 dark:text-emerald-400">
                             {settings.currencySymbol}{Number(price).toFixed(2)}
                         </span>
 

@@ -84,9 +84,7 @@ export default function FeaturedProducts() {
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8"
                     >
                         {data.map((product: any, index: number) => (
-                            <motion.div key={product._id} variants={item}>
-                                <ProductCard product={product} index={index} />
-                            </motion.div>
+                            <ProductCard key={product._id} product={product} index={index} />
                         ))}
                     </motion.div>
                 )}
