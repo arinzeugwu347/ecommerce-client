@@ -26,9 +26,10 @@ export default function AddToCartButton({
     product,
     className,
     size = "default",
-    showText = true
+    showText = true,
 }: AddToCartButtonProps) {
     const [loading, setLoading] = useState(false)
+    const [isSuccess, setIsSuccess] = useState(false)
     const countInStock = product.countInStock ?? 0
     const inStock = countInStock > 0
 
@@ -57,6 +58,9 @@ export default function AddToCartButton({
                     onClick: () => window.location.href = "/cart",
                 },
             })
+
+            setIsSuccess(true)
+            setTimeout(() => setIsSuccess(false), 2000)
         } catch (err) {
             const errorMessage = axios.isAxiosError(err)
                 ? err.response?.data?.message
@@ -73,14 +77,25 @@ export default function AddToCartButton({
     return (
         <Button
             size={size}
-            className={cn("gap-2 bg-emerald-600 hover:bg-emerald-700 text-white", className)}
+            className={cn(
+                "relative font-bold transition-all duration-300 overflow-hidden",
+                isSuccess
+                    ? "bg-emerald-500 hover:bg-emerald-500 text-white"
+                    : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-emerald-500/20",
+                !showText && "rounded-full p-2 h-10 w-10",
+                className
+            )}
             disabled={!inStock || loading}
             onClick={addToCartHandler}
         >
-            <ShoppingCart className="h-4 w-4" />
-            {showText && (
-                inStock ? (loading ? "Adding..." : "Add to Cart") : "Out of Stock"
-            )}
+            <div className="flex items-center justify-center gap-2">
+                <ShoppingCart className={cn("h-4 w-4 transition-transform", loading && "animate-bounce")} />
+                {showText && (
+                    <span className="whitespace-nowrap">
+                        {inStock ? (loading ? "Adding..." : (isSuccess ? "Added!" : "Add to Cart")) : "Out of Stock"}
+                    </span>
+                )}
+            </div>
         </Button>
     )
 }

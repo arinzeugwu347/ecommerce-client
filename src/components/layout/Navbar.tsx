@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
-import { Search, Moon, Sun, ShoppingCart, User, Menu, X, LogOut, Package, User as UserIcon, LogIn, ChevronRight } from "lucide-react"
+import { Search, Moon, Sun, ShoppingCart, User, Menu, X, LogOut, Package, User as UserIcon, LogIn, ChevronRight, Heart } from "lucide-react"
 import { useState, useEffect, useRef, forwardRef } from "react"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
@@ -16,6 +16,7 @@ import { useDebounce } from "@/hooks/useDebounce"
 import Image from "next/image"
 import { useAuthStore } from "@/store/authStore"
 import { useSettings } from "@/components/providers/SettingsProvider"
+import { useWishlistStore } from "@/store/wishlistStore"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -44,6 +45,7 @@ export default function Navbar() {
 
     const { user, isAuthenticated, logout } = useAuthStore()
     const { itemCount, setCart } = useCartStore()
+    const { items: wishlistItems, fetchWishlist } = useWishlistStore()
 
     const { data: backendCart } = useQuery({
         queryKey: ["cart", isAuthenticated],
@@ -55,7 +57,10 @@ export default function Navbar() {
         if (backendCart?.items && mounted) {
             setCart(backendCart.items)
         }
-    }, [backendCart, setCart, mounted])
+        if (isAuthenticated && mounted) {
+            fetchWishlist()
+        }
+    }, [backendCart, setCart, mounted, isAuthenticated, fetchWishlist])
 
     const { data: suggestions = [] } = useQuery({
         queryKey: ["search-suggestions", debouncedQuery],
@@ -144,6 +149,20 @@ export default function Navbar() {
                             ) : (
                                 <div className="h-5 w-5" />
                             )}
+                        </Button>
+
+                        {/* Wishlist */}
+                        <Button variant="ghost" size="icon" asChild className="relative rounded-full hover:bg-emerald-500/10 hover:text-emerald-500 transition-colors">
+                            <Link href="/wishlist">
+                                <Heart className="h-5 w-5" />
+                                {mounted && wishlistItems.length > 0 && (
+                                    <Badge
+                                        className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-[10px] bg-red-500 hover:bg-red-600 flex items-center justify-center border-2 border-background"
+                                    >
+                                        {wishlistItems.length}
+                                    </Badge>
+                                )}
+                            </Link>
                         </Button>
 
                         {/* Cart */}
@@ -242,6 +261,19 @@ export default function Navbar() {
                                                 <ChevronRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${pathname === link.href ? 'text-emerald-500' : 'text-muted-foreground'}`} />
                                             </Link>
                                         ))}
+                                        <Link
+                                            href="/wishlist"
+                                            onClick={() => setOpen(false)}
+                                            className={`flex items-center justify-between p-4 rounded-2xl transition-all duration-200 group ${pathname === '/wishlist' ? 'bg-red-500/10 text-red-600' : 'hover:bg-muted text-foreground'}`}
+                                        >
+                                            <span className="font-bold flex items-center gap-2">
+                                                Wishlist
+                                                {mounted && wishlistItems.length > 0 && (
+                                                    <Badge className="h-5 rounded-full px-1.5 text-[10px] bg-red-500">{wishlistItems.length}</Badge>
+                                                )}
+                                            </span>
+                                            <ChevronRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${pathname === '/wishlist' ? 'text-red-500' : 'text-muted-foreground'}`} />
+                                        </Link>
                                     </div>
 
                                     <div className="p-6 mt-auto border-t border-emerald-500/5 bg-muted/30">

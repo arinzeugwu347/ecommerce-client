@@ -20,6 +20,7 @@ import AddToCartButton from "@/components/common/AddToCartButton"
 import ProductReviewForm from "./ProductReviewForm"
 import ReviewItems from "./ReviewItems"
 import ProductGallery from "./ProductGallery"
+import WishlistToggleButton from "@/components/common/WishlistToggleButton"
 
 // Type for product (adjust based on your backend response)
 type Product = {
@@ -210,10 +211,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                                 size="lg"
                                 className="flex-1"
                             />
-                            <Button size="lg" variant="outline" className="flex-1 gap-2">
-                                <Heart className="h-5 w-5" />
-                                Add to Wishlist
-                            </Button>
+                            <WishlistToggleButton
+                                product={{
+                                    _id: product._id,
+                                    name: product.name,
+                                    price: product.price,
+                                    image: product.image,
+                                    slug: product.slug
+                                }}
+                                variant="with-text"
+                            />
                         </div>
                     </div>
 
