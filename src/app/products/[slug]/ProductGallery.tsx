@@ -22,7 +22,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
     return (
         <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative group aspect-square md:aspect-square sm:aspect-video rounded-2xl overflow-hidden border bg-muted shadow-sm cursor-zoom-in">
+            <div className="relative group aspect-square rounded-2xl overflow-hidden border bg-muted shadow-sm cursor-zoom-in">
                 <Image
                     src={images[activeIndex]}
                     alt={`${name} - View ${activeIndex + 1}`}
@@ -62,7 +62,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
 
             {/* Thumbnails */}
             {images.length > 1 && (
-                <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-2 scrollbar-hide touch-pan-x">
                     {images.map((img, i) => (
                         <button
                             key={i}
@@ -71,7 +71,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
                                 setIsZoomed(false)
                             }}
                             className={cn(
-                                "relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all",
+                                "relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all",
                                 activeIndex === i ? "border-primary ring-2 ring-primary/20" : "border-transparent hover:border-muted-foreground/30"
                             )}
                         >

@@ -116,9 +116,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 </ol>
             </nav>
 
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-start">
                 {/* Image Gallery */}
-                <ProductGallery images={[image, ...images]} name={name} />
+                <div className="w-full max-w-2xl mx-auto lg:max-w-none">
+                    <ProductGallery images={[image, ...images]} name={name} />
+                </div>
 
                 {/* Product Info */}
                 <div className="space-y-6 md:space-y-8">
@@ -130,7 +132,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                         {brand && (
                             <p className="text-sm text-muted-foreground mb-2">Brand: {brand}</p>
                         )}
-                        <h1 className="text-2xl md:text-4xl font-bold tracking-tight">{name}</h1>
+                        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">{name}</h1>
                     </div>
 
                     {/* Rating */}
@@ -159,8 +161,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                     </div>
 
                     {/* Price */}
-                    <div className="flex items-baseline gap-4">
-                        <span className="text-4xl md:text-5xl font-bold text-emerald-600 dark:text-emerald-400">
+                    <div className="flex items-baseline gap-3 sm:gap-4">
+                        <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-emerald-600 dark:text-emerald-400">
                             {settings.currencySymbol}{Number(price).toFixed(2)}
                         </span>
 
@@ -178,7 +180,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
                     {/* Description */}
                     <div className="prose dark:prose-invert max-w-none">
-                        <p className="text-lg leading-relaxed text-muted-foreground">
+                        <p className="text-base sm:text-lg leading-relaxed text-muted-foreground">
                             {description}
                         </p>
                     </div>
