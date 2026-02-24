@@ -52,7 +52,7 @@ export default function AdminSettingsPage() {
         reset,
         formState: { errors, isDirty }
     } = useForm<SettingsValues>({
-        resolver: zodResolver(settingsSchema),
+        resolver: zodResolver(settingsSchema) as any,
         defaultValues: {
             storeName: "",
             storeEmail: "",
