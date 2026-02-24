@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 // Create axios instance with base URL including /api
 const api: AxiosInstance = axios.create({
-    baseURL: `${API_BASE_URL}/api`,
+    baseURL: `${API_BASE_URL}api`,
     headers: {
         "Content-Type": "application/json",
     },
