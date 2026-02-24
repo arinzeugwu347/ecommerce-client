@@ -20,7 +20,7 @@ import api from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { useSettings } from "@/components/providers/SettingsProvider"
 import AdminRoute from "./AdminRoute"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/store/authStore"
 import { useRouter } from "next/navigation"
@@ -131,6 +131,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <SheetContent side="left" className="p-0 w-64">
                             <SheetHeader className="sr-only">
                                 <SheetTitle>Admin Navigation</SheetTitle>
+                                <SheetDescription>Access admin tools and settings</SheetDescription>
                             </SheetHeader>
                             <SidebarContent />
                         </SheetContent>
