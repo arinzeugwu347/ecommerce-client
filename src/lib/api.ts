@@ -2,7 +2,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios"
 import { toast } from "sonner"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 // Create axios instance with base URL including /api
 const api: AxiosInstance = axios.create({
