@@ -83,7 +83,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="container relative flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0 min-h-[calc(100vh-4rem)] px-0">
+        <div className="flex flex-col lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0 min-h-[calc(100svh-4rem)]">
             <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
                 <div className="absolute inset-0 bg-emerald-900" />
                 <div className="relative z-20 flex items-center text-lg font-medium">
@@ -106,8 +106,8 @@ export default function LoginPage() {
             <div className="p-4 sm:p-8">
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         transition={{ duration: 0.4 }}
                     >
                         <Card className="border-none shadow-none sm:border sm:shadow-sm">
@@ -192,7 +192,7 @@ export default function LoginPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex justify-center">
+                                <div className="flex justify-center min-h-[44px]">
                                     <GoogleLogin
                                         onSuccess={async (credentialResponse) => {
                                             if (credentialResponse.credential) {
