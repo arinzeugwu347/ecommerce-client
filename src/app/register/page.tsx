@@ -88,6 +88,29 @@ export default function RegisterPage() {
 
     return (
         <div className="relative min-h-[calc(100svh-4rem)] flex items-center justify-center p-4 overflow-hidden bg-slate-50 dark:bg-[#020817] transition-colors duration-300">
+            {/* 
+                BRUTAL STABILITY FIX v2
+                Forcibly disables GPU intensive painting that triggers ghosting on certain mobile hardware.
+            */}
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                .glitch-guard {
+                    transform: translateZ(0);
+                    will-change: opacity;
+                    backface-visibility: hidden;
+                    perspective: 1000;
+                }
+                @media (max-width: 1024px) {
+                    * {
+                        transition: opacity 0.3s ease-out !important;
+                        transform: none !important;
+                        backdrop-filter: none !important;
+                        filter: none !important;
+                        animation-duration: 0.4s !important;
+                    }
+                }
+            `}} />
+
             {/* Ambient Background Elements - Solid Opacity only */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] bg-emerald-500/5 dark:bg-emerald-500/5 rounded-full" />
@@ -99,7 +122,7 @@ export default function RegisterPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="w-full max-w-[480px] z-10"
+                    className="w-full max-w-[480px] z-10 glitch-guard"
                 >
                     <Card className="border-slate-200 dark:border-emerald-500/10 bg-white/90 dark:bg-slate-900/50 shadow-2xl backdrop-blur-none transition-colors duration-300">
                         <CardHeader className="space-y-4 pt-8 text-center">
@@ -160,7 +183,7 @@ export default function RegisterPage() {
                                             </FormItem>
                                         )}
                                     />
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-4">
                                         <FormField
                                             control={form.control}
                                             name="password"
@@ -187,7 +210,7 @@ export default function RegisterPage() {
                                             name="confirmPassword"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-slate-700 dark:text-slate-300">Confirm</FormLabel>
+                                                    <FormLabel className="text-slate-700 dark:text-slate-300">Confirm Password</FormLabel>
                                                     <FormControl>
                                                         <div className="relative group">
                                                             <Lock className="absolute left-3.5 top-3 h-5 w-5 text-slate-400 dark:text-slate-500 transition-colors group-focus-within:text-emerald-500" />
