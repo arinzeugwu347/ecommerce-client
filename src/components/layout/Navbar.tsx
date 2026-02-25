@@ -62,11 +62,13 @@ export default function Navbar() {
         }
     }, [backendCart, setCart, mounted, isAuthenticated, fetchWishlist])
 
-    const { data: suggestions = [], isLoading: isSearching } = useQuery({
+    const { data: suggestions = [], isFetching, isLoading } = useQuery({
         queryKey: ["search-suggestions", debouncedQuery],
         queryFn: () => api.get("/products", { params: { keyword: debouncedQuery, limit: 5 } }).then(res => res.data.products || []),
         enabled: debouncedQuery.length >= 1,
     })
+
+    const isSearching = isFetching || isLoading
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
@@ -317,7 +319,8 @@ export default function Navbar() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="md:hidden overflow-hidden border-t border-emerald-500/5"
+                            className="md:hidden border-t border-emerald-500/5"
+                            style={{ overflow: isSearchOpen ? 'visible' : 'hidden' }}
                         >
                             <div className="py-4 px-1 pb-6">
                                 <SearchBar
