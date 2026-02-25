@@ -107,8 +107,17 @@ export default function RegisterPage() {
                 </div>
             </div>
             <div className="p-4 sm:p-8">
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+                    * {
+                        transition: none !important;
+                        animation: none !important;
+                        backdrop-filter: none !important;
+                        filter: none !important;
+                    }
+                ` }} />
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[450px]">
-                    <div className="animate-in fade-in duration-500">
+                    <div>
                         <Card className="border-none shadow-none sm:border sm:shadow-sm">
                             <CardHeader className="space-y-1">
                                 <CardTitle className="text-2xl font-bold tracking-tight text-center">Create an account</CardTitle>
