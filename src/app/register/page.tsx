@@ -87,11 +87,11 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="relative min-h-[calc(100svh-4rem)] flex items-center justify-center p-4 overflow-hidden bg-[#020817]">
+        <div className="relative min-h-[calc(100svh-4rem)] flex items-center justify-center p-4 overflow-hidden bg-slate-50 dark:bg-[#020817] transition-colors duration-300">
             {/* Ambient Background Elements - Solid Opacity only */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] bg-emerald-500/5 rounded-full" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[35%] h-[35%] bg-emerald-500/5 rounded-full" />
+                <div className="absolute top-[-10%] right-[-10%] w-[45%] h-[45%] bg-emerald-500/5 dark:bg-emerald-500/5 rounded-full" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[35%] h-[35%] bg-emerald-500/5 dark:bg-emerald-500/5 rounded-full" />
             </div>
 
             <AnimatePresence mode="wait">
@@ -101,18 +101,18 @@ export default function RegisterPage() {
                     transition={{ duration: 0.6, ease: "easeOut" }}
                     className="w-full max-w-[480px] z-10"
                 >
-                    <Card className="border-emerald-500/10 bg-slate-900/50 shadow-2xl backdrop-blur-none">
+                    <Card className="border-slate-200 dark:border-emerald-500/10 bg-white/90 dark:bg-slate-900/50 shadow-2xl backdrop-blur-none transition-colors duration-300">
                         <CardHeader className="space-y-4 pt-8 text-center">
                             <div className="mx-auto h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 p-0.5 shadow-lg shadow-emerald-500/20">
-                                <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-slate-900">
-                                    <ShoppingBag className="h-6 w-6 text-emerald-400" />
+                                <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-white dark:bg-slate-900 transition-colors duration-300">
+                                    <ShoppingBag className="h-6 w-6 text-emerald-500 dark:text-emerald-400" />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <CardTitle className="text-3xl font-bold tracking-tight text-white mt-2">
+                                <CardTitle className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mt-2">
                                     Create Account
                                 </CardTitle>
-                                <CardDescription className="text-slate-400 text-base">
+                                <CardDescription className="text-slate-500 dark:text-slate-400 text-base">
                                     Join us today and enjoy exclusive benefits
                                 </CardDescription>
                             </div>
@@ -125,18 +125,18 @@ export default function RegisterPage() {
                                         name="name"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-slate-300">Full Name</FormLabel>
+                                                <FormLabel className="text-slate-700 dark:text-slate-300">Full Name</FormLabel>
                                                 <FormControl>
                                                     <div className="relative group">
-                                                        <User className="absolute left-3.5 top-3 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
+                                                        <User className="absolute left-3.5 top-3 h-5 w-5 text-slate-400 dark:text-slate-500 transition-colors group-focus-within:text-emerald-500" />
                                                         <Input
                                                             placeholder="John Doe"
-                                                            className="h-11 pl-11 bg-slate-950/50 border-emerald-500/20 text-white placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
+                                                            className="h-11 pl-11 bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-emerald-500/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
                                                             {...field}
                                                         />
                                                     </div>
                                                 </FormControl>
-                                                <FormMessage className="text-red-400" />
+                                                <FormMessage className="text-red-500 dark:text-red-400" />
                                             </FormItem>
                                         )}
                                     />
@@ -145,18 +145,18 @@ export default function RegisterPage() {
                                         name="email"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-slate-300">Email Address</FormLabel>
+                                                <FormLabel className="text-slate-700 dark:text-slate-300">Email Address</FormLabel>
                                                 <FormControl>
                                                     <div className="relative group">
-                                                        <Mail className="absolute left-3.5 top-3 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
+                                                        <Mail className="absolute left-3.5 top-3 h-5 w-5 text-slate-400 dark:text-slate-500 transition-colors group-focus-within:text-emerald-500" />
                                                         <Input
                                                             placeholder="name@example.com"
-                                                            className="h-11 pl-11 bg-slate-950/50 border-emerald-500/20 text-white placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
+                                                            className="h-11 pl-11 bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-emerald-500/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
                                                             {...field}
                                                         />
                                                     </div>
                                                 </FormControl>
-                                                <FormMessage className="text-red-400" />
+                                                <FormMessage className="text-red-500 dark:text-red-400" />
                                             </FormItem>
                                         )}
                                     />
@@ -166,19 +166,19 @@ export default function RegisterPage() {
                                             name="password"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-slate-300">Password</FormLabel>
+                                                    <FormLabel className="text-slate-700 dark:text-slate-300">Password</FormLabel>
                                                     <FormControl>
                                                         <div className="relative group">
-                                                            <Lock className="absolute left-3.5 top-3 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
+                                                            <Lock className="absolute left-3.5 top-3 h-5 w-5 text-slate-400 dark:text-slate-500 transition-colors group-focus-within:text-emerald-500" />
                                                             <Input
                                                                 type="password"
                                                                 placeholder="••••••••"
-                                                                className="h-11 pl-11 bg-slate-950/50 border-emerald-500/20 text-white placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
+                                                                className="h-11 pl-11 bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-emerald-500/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
                                                                 {...field}
                                                             />
                                                         </div>
                                                     </FormControl>
-                                                    <FormMessage className="text-red-400" />
+                                                    <FormMessage className="text-red-500 dark:text-red-400" />
                                                 </FormItem>
                                             )}
                                         />
@@ -187,26 +187,26 @@ export default function RegisterPage() {
                                             name="confirmPassword"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-slate-300">Confirm</FormLabel>
+                                                    <FormLabel className="text-slate-700 dark:text-slate-300">Confirm</FormLabel>
                                                     <FormControl>
                                                         <div className="relative group">
-                                                            <Lock className="absolute left-3.5 top-3 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
+                                                            <Lock className="absolute left-3.5 top-3 h-5 w-5 text-slate-400 dark:text-slate-500 transition-colors group-focus-within:text-emerald-500" />
                                                             <Input
                                                                 type="password"
                                                                 placeholder="••••••••"
-                                                                className="h-11 pl-11 bg-slate-950/50 border-emerald-500/20 text-white placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
+                                                                className="h-11 pl-11 bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-emerald-500/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
                                                                 {...field}
                                                             />
                                                         </div>
                                                     </FormControl>
-                                                    <FormMessage className="text-red-400" />
+                                                    <FormMessage className="text-red-500 dark:text-red-400" />
                                                 </FormItem>
                                             )}
                                         />
                                     </div>
                                     <Button
                                         type="submit"
-                                        className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold h-12 text-base transition-all active:scale-[0.98]"
+                                        className="w-full bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-slate-950 font-bold h-12 text-base transition-all active:scale-[0.98]"
                                         disabled={isLoading}
                                     >
                                         {isLoading ? (
@@ -223,15 +223,15 @@ export default function RegisterPage() {
 
                             <div className="relative my-8">
                                 <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-slate-800"></div>
+                                    <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-[#121a2a] px-3 text-slate-500">Or join with</span>
+                                    <span className="bg-white dark:bg-[#121a2a] px-3 text-slate-400 dark:text-slate-500 transition-colors duration-300">Or join with</span>
                                 </div>
                             </div>
 
                             <div className="flex flex-col items-center gap-4">
-                                <div className="w-full max-w-[280px] min-h-[44px] flex justify-center bg-white rounded-lg overflow-hidden border border-slate-800 p-0.5">
+                                <div className="w-full max-w-[280px] min-h-[44px] flex justify-center bg-white rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 p-0.5 transition-colors duration-300">
                                     <GoogleLogin
                                         onSuccess={async (credentialResponse) => {
                                             if (credentialResponse.credential) {
@@ -258,11 +258,11 @@ export default function RegisterPage() {
                                         width="280"
                                     />
                                 </div>
-                                <div className="text-sm text-slate-400 mt-4">
+                                <div className="text-sm text-slate-600 dark:text-slate-400 mt-4">
                                     Already have an account?{" "}
                                     <Link
                                         href="/login"
-                                        className="font-bold text-emerald-400 hover:text-emerald-300 ml-1 transition-colors"
+                                        className="font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 ml-1 transition-colors"
                                     >
                                         Login Now
                                     </Link>
@@ -271,11 +271,11 @@ export default function RegisterPage() {
                         </CardContent>
                     </Card>
 
-                    <div className="mt-8 flex items-center justify-center gap-6 opacity-40">
-                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+                    <div className="mt-8 flex items-center justify-center gap-6 opacity-60 dark:opacity-40">
+                        <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">
                             <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Privacy Protected
                         </div>
-                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+                        <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">
                             <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Quality Guarantee
                         </div>
                     </div>
