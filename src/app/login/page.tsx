@@ -6,9 +6,10 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import axios from "axios"
-import { LogIn, Mail, Lock, Loader2, ArrowRight, ShoppingBag } from "lucide-react"
+import { LogIn, Mail, Lock, Loader2, ArrowRight, ShoppingBag, CheckCircle2 } from "lucide-react"
 import { GoogleLogin } from "@react-oauth/google"
 
 import api from "@/lib/api"
@@ -82,121 +83,116 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex flex-col lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0 min-h-[calc(100svh-4rem)]">
-            <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
-                <div className="absolute inset-0 bg-emerald-900" />
-                <div className="relative z-20 flex items-center text-lg font-medium">
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center">
-                            <ShoppingBag className="h-5 w-5 text-white" />
-                        </div>
-                        <span className="text-2xl font-bold tracking-tight">YourShop</span>
-                    </Link>
-                </div>
-                <div className="relative z-20 mt-auto">
-                    <blockquote className="space-y-2">
-                        <p className="text-lg">
-                            &ldquo;This shop has saved me countless hours of work and helped me deliver stunning projects to my clients faster than ever before.&rdquo;
-                        </p>
-                        <footer className="text-sm">Alexandra</footer>
-                    </blockquote>
-                </div>
+        <div className="relative min-h-[calc(100svh-4rem)] flex items-center justify-center p-4 overflow-hidden bg-[#020817]">
+            {/* Ambient Background Elements - Solid Opacity only, no blurs or complex transforms */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/5 rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-emerald-500/5 rounded-full" />
             </div>
-            <div className="p-4 sm:p-8">
-                <style dangerouslySetInnerHTML={{
-                    __html: `
-                    * {
-                        transition: none !important;
-                        animation: none !important;
-                        backdrop-filter: none !important;
-                        filter: none !important;
-                    }
-                ` }} />
-                <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
-                    <div>
-                        <Card className="border-none shadow-none sm:border sm:shadow-sm">
-                            <CardHeader className="space-y-1">
-                                <CardTitle className="text-2xl font-bold tracking-tight text-center">Login</CardTitle>
-                                <CardDescription className="text-center">
-                                    Enter your credentials to access your account
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Form {...form}>
-                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                                        <FormField
-                                            control={form.control}
-                                            name="email"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Email</FormLabel>
-                                                    <FormControl>
-                                                        <div className="relative">
-                                                            <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                                            <Input
-                                                                placeholder="name@example.com"
-                                                                className="pl-10"
-                                                                {...field}
-                                                            />
-                                                        </div>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="password"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <div className="flex items-center justify-between">
-                                                        <FormLabel>Password</FormLabel>
-                                                        <Link
-                                                            href="/forgot-password"
-                                                            className="text-sm font-medium text-emerald-600 hover:text-emerald-500 underline-offset-4 hover:underline"
-                                                        >
-                                                            Forgot password?
-                                                        </Link>
-                                                    </div>
-                                                    <FormControl>
-                                                        <div className="relative">
-                                                            <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                                            <Input
-                                                                type="password"
-                                                                placeholder="••••••••"
-                                                                className="pl-10"
-                                                                {...field}
-                                                            />
-                                                        </div>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <Button
-                                            type="submit"
-                                            className="w-full bg-emerald-600 hover:bg-emerald-700 h-11"
-                                            disabled={isLoading}
-                                        >
-                                            {isLoading ? (
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            ) : (
-                                                <LogIn className="mr-2 h-4 w-4" />
-                                            )}
-                                        </Button>
-                                    </form>
-                                </Form>
 
-                                <div className="relative my-6">
-                                    <div className="absolute inset-0 flex items-center">
-                                        <div className="w-full border-t border-muted-foreground/20"></div>
-                                    </div>
-                                    <div className="relative flex justify-center text-xs uppercase">
-                                        <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                                    </div>
+            <AnimatePresence mode="wait">
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="w-full max-w-[440px] z-10"
+                >
+                    <Card className="border-emerald-500/10 bg-slate-900/50 shadow-2xl backdrop-blur-none">
+                        <CardHeader className="space-y-4 pt-8 text-center">
+                            <div className="mx-auto h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 p-0.5 shadow-lg shadow-emerald-500/20">
+                                <div className="flex h-full w-full items-center justify-center rounded-[14px] bg-slate-900">
+                                    <ShoppingBag className="h-6 w-6 text-emerald-400" />
                                 </div>
+                            </div>
+                            <div className="space-y-2">
+                                <CardTitle className="text-3xl font-bold tracking-tight text-white mt-2">
+                                    Welcome Back
+                                </CardTitle>
+                                <CardDescription className="text-slate-400 text-base">
+                                    Enter your details to access your account
+                                </CardDescription>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="px-8 pb-8 pt-2">
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                                    <FormField
+                                        control={form.control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-slate-300">Email Address</FormLabel>
+                                                <FormControl>
+                                                    <div className="relative group">
+                                                        <Mail className="absolute left-3.5 top-3 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
+                                                        <Input
+                                                            placeholder="name@example.com"
+                                                            className="h-11 pl-11 bg-slate-950/50 border-emerald-500/20 text-white placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
+                                                            {...field}
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage className="text-red-400" />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <div className="flex items-center justify-between">
+                                                    <FormLabel className="text-slate-300">Password</FormLabel>
+                                                    <Link
+                                                        href="/forgot-password"
+                                                        className="text-xs font-medium text-emerald-400 hover:text-emerald-300"
+                                                    >
+                                                        Forgot password?
+                                                    </Link>
+                                                </div>
+                                                <FormControl>
+                                                    <div className="relative group">
+                                                        <Lock className="absolute left-3.5 top-3 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-500" />
+                                                        <Input
+                                                            type="password"
+                                                            placeholder="••••••••"
+                                                            className="h-11 pl-11 bg-slate-950/50 border-emerald-500/20 text-white placeholder:text-slate-600 focus-visible:ring-emerald-500/50 focus-visible:border-emerald-500/50"
+                                                            {...field}
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage className="text-red-400" />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button
+                                        type="submit"
+                                        className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold h-12 text-base transition-all active:scale-[0.98]"
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                        ) : (
+                                            <>
+                                                <span>Sign In</span>
+                                                <ArrowRight className="ml-2 h-5 w-5" />
+                                            </>
+                                        )}
+                                    </Button>
+                                </form>
+                            </Form>
 
-                                <div className="flex justify-center min-h-[44px]">
+                            <div className="relative my-8">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-slate-800"></div>
+                                </div>
+                                <div className="relative flex justify-center text-xs uppercase">
+                                    <span className="bg-[#121a2a] px-3 text-slate-500">Or continue with</span>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="w-full max-w-[280px] min-h-[44px] flex justify-center bg-white rounded-lg overflow-hidden border border-slate-800 p-0.5">
                                     <GoogleLogin
                                         onSuccess={async (credentialResponse) => {
                                             if (credentialResponse.credential) {
@@ -218,37 +214,34 @@ export default function LoginPage() {
                                                 description: "The Google authentication flow was interrupted.",
                                             })
                                         }}
-                                        theme="outline"
-                                        shape="rectangular"
+                                        theme="filled_blue"
+                                        shape="pill"
+                                        width="280"
                                     />
                                 </div>
-                            </CardContent>
-                            <CardFooter className="flex flex-col gap-4">
-                                <div className="text-sm text-center text-muted-foreground">
+                                <div className="text-sm text-slate-400 mt-4">
                                     Don't have an account?{" "}
                                     <Link
                                         href="/register"
-                                        className="font-medium text-emerald-600 hover:text-emerald-500 underline-offset-4 hover:underline"
+                                        className="font-bold text-emerald-400 hover:text-emerald-300 ml-1 transition-colors"
                                     >
-                                        Create an account
+                                        Sign Up Free
                                     </Link>
                                 </div>
-                            </CardFooter>
-                        </Card>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <div className="mt-8 flex items-center justify-center gap-6 opacity-40">
+                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+                            <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Secure SSL
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+                            <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Instant Access
+                        </div>
                     </div>
-                    <p className="px-8 text-center text-sm text-muted-foreground">
-                        By clicking continue, you agree to our{" "}
-                        <Link href="/terms" className="underline underline-offset-4 hover:text-primary">
-                            Terms of Service
-                        </Link>{" "}
-                        and{" "}
-                        <Link href="/privacy" className="underline underline-offset-4 hover:text-primary">
-                            Privacy Policy
-                        </Link>
-                        .
-                    </p>
-                </div>
-            </div>
+                </motion.div>
+            </AnimatePresence>
         </div>
     )
 }
