@@ -283,9 +283,8 @@ export default function CheckoutPage() {
                                                 className="object-cover rounded"
                                                 loading="eager"
                                                 fill
-                                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                                                sizes="48px"
                                             />
-
                                         </div>
                                         <div>
                                             <p className="font-medium line-clamp-1">{item.product?.name || "Unknown Product"}</p>

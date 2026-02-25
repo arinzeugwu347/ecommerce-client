@@ -20,6 +20,7 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
+    SheetClose,
 } from "@/components/ui/sheet"
 import { ChevronLeft, ChevronRight, Filter, SlidersHorizontal } from "lucide-react"
 import { useSearchParams, useRouter } from "next/navigation"
@@ -150,7 +151,6 @@ export default function ProductsPage() {
                                     <h3 className="font-semibold text-lg">Category</h3>
                                     <Select value={category || "all"} onValueChange={(val: string) => {
                                         setCategory(val)
-                                        updateFilters({ category: val, page: 1 })
                                     }}>
                                         <SelectTrigger className="w-full h-11">
                                             <SelectValue placeholder="All Categories" />
@@ -170,7 +170,6 @@ export default function ProductsPage() {
                                     <h3 className="font-semibold text-lg">Sort By</h3>
                                     <Select value={sort} onValueChange={(val: string) => {
                                         setSort(val)
-                                        updateFilters({ sort: val, page: 1 })
                                     }}>
                                         <SelectTrigger className="w-full h-11">
                                             <SelectValue placeholder="Sort by" />
@@ -185,17 +184,24 @@ export default function ProductsPage() {
                                 </div>
 
                                 <div className="pt-4 space-y-3">
-                                    {(category !== "all" || initialKeyword) && (
-                                        <Button variant="outline" className="w-full h-11" asChild>
-                                            <Link href="/products">Clear All Filters</Link>
-                                        </Button>
+                                    {(category !== "all" || initialKeyword || sort !== "newest") && (
+                                        <SheetClose asChild>
+                                            <Button variant="outline" className="w-full h-11" onClick={() => {
+                                                setCategory("all")
+                                                setSort("newest")
+                                                router.push("/products")
+                                            }}>
+                                                Clear All Filters
+                                            </Button>
+                                        </SheetClose>
                                     )}
-                                    <Button className="w-full h-11" onClick={() => {
-                                        // Close sheet trigger implicitly by state if needed, 
-                                        // but usually shadcn sheet closes on interaction or we can just leave it
-                                    }}>
-                                        Apply Filters
-                                    </Button>
+                                    <SheetClose asChild>
+                                        <Button className="w-full h-11" onClick={() => {
+                                            updateFilters({ category, sort, page: 1 })
+                                        }}>
+                                            Apply Filters
+                                        </Button>
+                                    </SheetClose>
                                 </div>
                             </div>
                         </SheetContent>
@@ -235,9 +241,13 @@ export default function ProductsPage() {
                             </SelectContent>
                         </Select>
 
-                        {(category !== "all" || initialKeyword) && (
-                            <Button variant="ghost" className="h-11 px-4 hover:bg-muted" asChild>
-                                <Link href="/products">Clear All</Link>
+                        {(category !== "all" || initialKeyword || sort !== "newest") && (
+                            <Button variant="ghost" className="h-11 px-4 hover:bg-muted" onClick={() => {
+                                setCategory("all")
+                                setSort("newest")
+                                router.push("/products")
+                            }}>
+                                Clear All
                             </Button>
                         )}
                     </div>
@@ -261,10 +271,14 @@ export default function ProductsPage() {
                 <div className="text-center py-24">
                     <h2 className="text-2xl font-semibold mb-4">No products found</h2>
                     <p className="text-muted-foreground mb-8">
-                        Try adjusting your filters or search terms.
+                        {category && category !== "all"
+                            ? `There are currently no products in the ${category} category.`
+                            : "Try adjusting your filters or search terms."}
                     </p>
                     <Button asChild>
-                        <Link href="/products">Clear Filters</Link>
+                        <Link href={category && category !== "all" ? "/categories" : "/products"}>
+                            {category && category !== "all" ? "Back to Categories" : "Clear Filters"}
+                        </Link>
                     </Button>
                 </div>
             ) : (

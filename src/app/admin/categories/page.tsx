@@ -136,6 +136,7 @@ export default function AdminCategoriesPage() {
                                                                 src={cat.image}
                                                                 alt={cat.name}
                                                                 fill
+                                                                sizes="40px"
                                                                 className="object-cover"
                                                             />
                                                         ) : (

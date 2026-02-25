@@ -17,8 +17,7 @@ import {
 import { cn } from "@/lib/utils"
 import api, { API_BASE_URL } from "@/lib/api"
 import AddToCartButton from "@/components/common/AddToCartButton"
-import ProductReviewForm from "./ProductReviewForm"
-import ReviewItems from "./ReviewItems"
+import ReviewsContainer from "./ReviewsContainer"
 import ProductGallery from "./ProductGallery"
 import WishlistToggleButton from "@/components/common/WishlistToggleButton"
 
@@ -51,7 +50,7 @@ type Product = {
 async function getProduct(slug: string): Promise<Product | null> {
     try {
         const res = await fetch(`${API_BASE_URL}/api/products/${slug}`, {
-            next: { revalidate: 60 } // Cache for 60 seconds
+            cache: 'no-store' // Always fetch fresh data to prevent stale review flickering
         })
         if (!res.ok) return null
         return res.json()
@@ -246,10 +245,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <div className="container mx-auto px-4">
                     <h2 className="text-2xl md:text-3xl font-bold mb-8">Customer Reviews</h2>
 
-                    <ReviewItems reviews={reviews} slug={slug} />
-
-                    {/* Submission Form */}
-                    <ProductReviewForm slug={slug} reviews={reviews} />
+                    <ReviewsContainer initialReviews={reviews} slug={slug} />
                 </div>
             </section>
         </div>

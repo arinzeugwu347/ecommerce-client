@@ -37,11 +37,11 @@ api.interceptors.response.use(
         const message = error.response?.data?.message || error.message || "An unexpected error occurred"
 
         if (status === 401) {
-            // Clear token and optionally redirect
-            if (typeof window !== "undefined") {
-                localStorage.removeItem("token")
-            }
-            toast.error("Session expired. Please login again.")
+            // Import dynamically or use getState to avoid circular dependency
+            const { useAuthStore } = require("@/store/authStore")
+            useAuthStore.getState().logout()
+
+            toast.error("Session expired or user not found. Please login again.")
         } else if (status === 500) {
             toast.error("Internal Server Error. Please try again later.")
         } else if (error.code === "ECONNABORTED") {

@@ -36,7 +36,7 @@ export default function Navbar() {
     const [mounted, setMounted] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
     const [isSearchOpen, setIsSearchOpen] = useState(false)
-    const debouncedQuery = useDebounce(searchQuery, 300)
+    const debouncedQuery = useDebounce(searchQuery, 200)
     const searchInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -62,10 +62,10 @@ export default function Navbar() {
         }
     }, [backendCart, setCart, mounted, isAuthenticated, fetchWishlist])
 
-    const { data: suggestions = [] } = useQuery({
+    const { data: suggestions = [], isLoading: isSearching } = useQuery({
         queryKey: ["search-suggestions", debouncedQuery],
         queryFn: () => api.get("/products", { params: { keyword: debouncedQuery, limit: 5 } }).then(res => res.data.products || []),
-        enabled: debouncedQuery.length >= 2,
+        enabled: debouncedQuery.length >= 1,
     })
 
     const handleSearch = (e: React.FormEvent) => {
@@ -119,6 +119,7 @@ export default function Navbar() {
                             handleSearch={handleSearch}
                             debouncedQuery={debouncedQuery}
                             suggestions={suggestions}
+                            isSearching={isSearching}
                         />
                     </div>
 
@@ -325,6 +326,7 @@ export default function Navbar() {
                                     handleSearch={handleSearch}
                                     debouncedQuery={debouncedQuery}
                                     suggestions={suggestions}
+                                    isSearching={isSearching}
                                     ref={searchInputRef}
                                 />
                             </div>
@@ -336,10 +338,23 @@ export default function Navbar() {
     )
 }
 
-const SearchBar = forwardRef(({ searchQuery, setSearchQuery, handleSearch, debouncedQuery, suggestions }: any, ref: any) => {
+const SearchBar = forwardRef(({ searchQuery, setSearchQuery, handleSearch, debouncedQuery, suggestions, isSearching }: any, ref: any) => {
     const { currencySymbol } = useSettings()
+    const containerRef = useRef<HTMLDivElement>(null)
+    const [showSuggestions, setShowSuggestions] = useState(false)
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setShowSuggestions(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
+
     return (
-        <div className="w-full relative">
+        <div className="w-full relative" ref={containerRef}>
             <form onSubmit={handleSearch} className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-emerald-500 transition-colors" />
@@ -350,6 +365,7 @@ const SearchBar = forwardRef(({ searchQuery, setSearchQuery, handleSearch, debou
                     className="pl-11 pr-24 w-full h-11 md:h-12 bg-muted/30 border-2 border-transparent focus:border-emerald-500/30 focus:bg-background rounded-2xl transition-all duration-300 shadow-none ring-0 placeholder:text-muted-foreground/60"
                     value={searchQuery}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                    onFocus={() => setShowSuggestions(true)}
                     ref={ref}
                 />
                 <div className="absolute inset-y-0 right-0 p-1 flex items-center">
@@ -364,52 +380,83 @@ const SearchBar = forwardRef(({ searchQuery, setSearchQuery, handleSearch, debou
             </form>
 
             <AnimatePresence>
-                {debouncedQuery.length >= 2 && suggestions.length > 0 && (
+                {showSuggestions && debouncedQuery.length >= 1 && (
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
-                        className="absolute top-full left-0 right-0 mt-3 bg-background border border-emerald-500/10 rounded-3xl shadow-2xl overflow-hidden z-50 p-2"
+                        className="absolute top-full left-0 right-0 mt-3 bg-background border border-emerald-500/10 rounded-3xl shadow-2xl overflow-hidden z-[100] p-2"
                     >
-                        {suggestions.map((product: any) => (
-                            <Link
-                                key={product._id}
-                                href={`/products/${product.slug}`}
-                                className="flex items-center gap-4 p-3 hover:bg-emerald-500/5 rounded-2xl transition-all group"
-                                onClick={() => setSearchQuery("")}
-                            >
-                                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-muted group-hover:scale-105 transition-transform duration-300 flex-shrink-0">
-                                    <Image
-                                        src={product.image}
-                                        alt={product.name}
-                                        fill
-                                        className="object-cover"
-                                        loading="lazy"
-                                    />
+                        {isSearching ? (
+                            <div className="p-8 flex items-center justify-center gap-3 text-muted-foreground italic">
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                                    className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full"
+                                />
+                                Searching for items...
+                            </div>
+                        ) : suggestions.length > 0 ? (
+                            <>
+                                {suggestions.map((product: any) => (
+                                    <Link
+                                        key={product._id}
+                                        href={`/products/${product.slug}`}
+                                        className="flex items-center gap-4 p-3 hover:bg-emerald-500/5 rounded-2xl transition-all group"
+                                        onClick={() => {
+                                            setSearchQuery("")
+                                            setShowSuggestions(false)
+                                        }}
+                                    >
+                                        <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-muted group-hover:scale-105 transition-transform duration-300 flex-shrink-0">
+                                            <Image
+                                                src={product.image}
+                                                alt={product.name}
+                                                fill
+                                                sizes="56px"
+                                                className="object-cover"
+                                                loading="lazy"
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-bold text-sm truncate group-hover:text-emerald-600 transition-colors">{product.name}</p>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <span className="text-emerald-600 dark:text-emerald-400 font-black text-sm">
+                                                    {currencySymbol}{(product.discountPrice || product.price || 0).toFixed(2)}
+                                                </span>
+                                                {!!product.discountPrice && product.discountPrice < product.price && (
+                                                    <span className="text-[10px] text-muted-foreground line-through opacity-60">
+                                                        {currencySymbol}{Number(product.price).toFixed(2)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                                    </Link>
+                                ))}
+                                <div className="p-2 pt-0 mt-1 border-t border-emerald-500/5">
+                                    <Button variant="ghost" asChild className="w-full rounded-xl hover:bg-emerald-500/10 text-emerald-600 font-bold text-xs py-5 mt-2">
+                                        <Link href={`/search?q=${encodeURIComponent(debouncedQuery)}`} onClick={() => setShowSuggestions(false)}>
+                                            View all results for "{debouncedQuery}"
+                                        </Link>
+                                    </Button>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-bold text-sm truncate group-hover:text-emerald-600 transition-colors">{product.name}</p>
-                                    <div className="flex items-center gap-2 mt-0.5">
-                                        <span className="text-emerald-600 dark:text-emerald-400 font-black text-sm">
-                                            {currencySymbol}{(Number(product.price) || 0).toFixed(2)}
-                                        </span>
-                                        {product.oldPrice && (
-                                            <span className="text-[10px] text-muted-foreground line-through opacity-60">
-                                                {currencySymbol}{product.oldPrice.toFixed(2)}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                            </Link>
-                        ))}
-                        <div className="p-2 pt-0 mt-1">
-                            <Button variant="ghost" asChild className="w-full rounded-xl hover:bg-emerald-500/10 text-emerald-600 font-bold text-xs py-5">
-                                <Link href={`/search?q=${encodeURIComponent(debouncedQuery)}`}>
-                                    View all results for "{debouncedQuery}"
-                                </Link>
-                            </Button>
-                        </div>
+                            </>
+                        ) : (
+                            <div className="p-8 text-center">
+                                <p className="text-muted-foreground text-sm mb-2">No products found matching "{debouncedQuery}"</p>
+                                <Button
+                                    variant="link"
+                                    className="text-emerald-600 text-xs font-bold"
+                                    onClick={() => {
+                                        setSearchQuery("")
+                                        setShowSuggestions(false)
+                                    }}
+                                >
+                                    Clear search
+                                </Button>
+                            </div>
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>

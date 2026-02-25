@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Star } from "lucide-react"
 import { useAuthStore } from "@/store/authStore"
+import { useQueryClient } from "@tanstack/react-query"
 
 const reviewSchema = z.object({
     rating: z
@@ -33,13 +34,18 @@ type ReviewFormData = z.infer<typeof reviewSchema>
 
 interface ProductReviewFormProps {
     slug: string
-    reviews: Array<{ user: string }>
+    reviews: Array<{ user: string | { _id: string } }>
+    onSuccess?: (newReview: any) => void
 }
 
-export default function ProductReviewForm({ slug, reviews }: ProductReviewFormProps) {
+export default function ProductReviewForm({ slug, reviews, onSuccess }: ProductReviewFormProps) {
     const { user, isAuthenticated } = useAuthStore()
     const router = useRouter()
-    const hasReviewed = reviews.some(r => r.user === user?._id)
+    const queryClient = useQueryClient()
+    const hasReviewed = reviews.some(r => {
+        const reviewUserId = typeof r.user === "string" ? r.user : r.user?._id
+        return reviewUserId === user?._id
+    })
 
     const form = useForm<ReviewFormData>({
         resolver: zodResolver(reviewSchema),
@@ -51,12 +57,27 @@ export default function ProductReviewForm({ slug, reviews }: ProductReviewFormPr
 
     const onSubmit = async (data: ReviewFormData) => {
         try {
-            await api.post(`/products/${slug}/reviews`, data)
+            const res = await api.post(`/products/${slug}/reviews`, data)
             toast.success("Review submitted", {
                 description: "Thank you for your feedback!",
             })
+
+            if (onSuccess && user) {
+                // Reconstruct the review object locally for instant UI update
+                // The backend currently only returns a message, so we build it ourselves
+                onSuccess({
+                    _id: Date.now().toString(), // Temporary ID until refresh
+                    name: user.name,
+                    rating: data.rating,
+                    comment: data.comment,
+                    user: user._id,
+                    createdAt: new Date().toISOString()
+                })
+            }
+
             form.reset()
-            router.refresh()
+            // Invalidate any tanstack queries for products
+            queryClient.invalidateQueries({ queryKey: ["products"] })
         } catch (err) {
             const errorMessage = axios.isAxiosError(err)
                 ? err.response?.data?.message

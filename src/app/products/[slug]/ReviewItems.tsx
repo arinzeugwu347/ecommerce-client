@@ -27,15 +27,16 @@ interface Review {
     rating: number
     comment: string
     createdAt: string
-    user: string
+    user: string | { _id: string; name: string }
 }
 
 interface ReviewItemsProps {
     reviews: Review[]
     slug: string
+    onDelete?: (reviewId: string) => void
 }
 
-export default function ReviewItems({ reviews, slug }: ReviewItemsProps) {
+export default function ReviewItems({ reviews, slug, onDelete }: ReviewItemsProps) {
     const router = useRouter()
     const { user } = useAuthStore()
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
@@ -49,9 +50,14 @@ export default function ReviewItems({ reviews, slug }: ReviewItemsProps) {
             await api.delete(`/products/${slug}/reviews`, {
                 data: { reviewId: reviewToDelete }
             })
+
+            // Update parent state immediately
+            if (onDelete) {
+                onDelete(reviewToDelete)
+            }
+
             toast.success("Review deleted successfully")
             setReviewToDelete(null)
-            router.refresh()
         } catch (err) {
             const errorMessage = axios.isAxiosError(err)
                 ? err.response?.data?.message
@@ -110,20 +116,23 @@ export default function ReviewItems({ reviews, slug }: ReviewItemsProps) {
                                 &ldquo;{review.comment}&rdquo;
                             </p>
 
-                            {(user?._id === review.user || user?.role === "admin") && (
-                                <div className="mt-4 flex justify-end">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                                        onClick={() => setReviewToDelete(review._id || "")}
-                                        disabled={isDeleting && reviewToDelete === review._id}
-                                    >
-                                        <Trash2 className={cn("h-4 w-4", isDeleting && reviewToDelete === review._id && "animate-pulse")} />
-                                        <span className="sr-only">Delete review</span>
-                                    </Button>
-                                </div>
-                            )}
+                            {(() => {
+                                const reviewUserId = typeof review.user === "string" ? review.user : review.user?._id
+                                return (user?._id === reviewUserId || user?.role === "admin")
+                            })() && (
+                                    <div className="mt-4 flex justify-end">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                            onClick={() => setReviewToDelete(review._id || "")}
+                                            disabled={isDeleting && reviewToDelete === review._id}
+                                        >
+                                            <Trash2 className={cn("h-4 w-4", isDeleting && reviewToDelete === review._id && "animate-pulse")} />
+                                            <span className="sr-only">Delete review</span>
+                                        </Button>
+                                    </div>
+                                )}
                         </CardContent>
                     </Card>
                 ))}

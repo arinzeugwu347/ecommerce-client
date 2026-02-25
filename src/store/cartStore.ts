@@ -90,6 +90,8 @@ export const useCartStore = create<CartState>()(
                 }),
 
             fetchCart: async () => {
+                if (typeof window !== 'undefined' && !localStorage.getItem('token')) return;
+
                 try {
                     const res = await api.get('/cart')
                     const cartItems = res.data.items || []
@@ -97,8 +99,10 @@ export const useCartStore = create<CartState>()(
                         items: cartItems,
                         itemCount: cartItems.reduce((sum: number, i: any) => sum + i.quantity, 0),
                     })
-                } catch (err) {
+                } catch (err: any) {
                     // Fail silently or handle via global interceptor
+                    if (err.response?.status === 401) return;
+                    console.error('Failed to fetch cart', err);
                 }
             },
         }),

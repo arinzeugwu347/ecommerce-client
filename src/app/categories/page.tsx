@@ -14,6 +14,8 @@ interface Category {
     description: string
 }
 
+const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&auto=format&fit=crop"
+
 export default function CategoriesPage() {
     const { data: categories, isLoading, error } = useQuery({
         queryKey: ['categories'],
@@ -48,9 +50,10 @@ export default function CategoriesPage() {
                             <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group h-full border-none bg-transparent">
                                 <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
                                     <Image
-                                        src={category.image}
+                                        src={category.image || PLACEHOLDER_IMAGE}
                                         alt={category.name}
                                         fill
+                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
