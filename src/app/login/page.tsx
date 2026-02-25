@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { motion } from "framer-motion"
 import { toast } from "sonner"
 import axios from "axios"
 import { LogIn, Mail, Lock, Loader2, ArrowRight, ShoppingBag } from "lucide-react"
@@ -105,11 +104,7 @@ export default function LoginPage() {
             </div>
             <div className="p-4 sm:p-8">
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.4 }}
-                    >
+                    <div className="animate-in fade-in duration-500">
                         <Card className="border-none shadow-none sm:border sm:shadow-sm">
                             <CardHeader className="space-y-1">
                                 <CardTitle className="text-2xl font-bold tracking-tight text-center">Login</CardTitle>
@@ -231,7 +226,7 @@ export default function LoginPage() {
                                 </div>
                             </CardFooter>
                         </Card>
-                    </motion.div>
+                    </div>
                     <p className="px-8 text-center text-sm text-muted-foreground">
                         By clicking continue, you agree to our{" "}
                         <Link href="/terms" className="underline underline-offset-4 hover:text-primary">

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { motion } from "framer-motion"
 import { toast } from "sonner"
 import axios from "axios"
 import { UserPlus, Mail, Lock, User, Loader2, ShoppingBag } from "lucide-react"
@@ -109,11 +108,7 @@ export default function RegisterPage() {
             </div>
             <div className="p-4 sm:p-8">
                 <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[450px]">
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.4 }}
-                    >
+                    <div className="animate-in fade-in duration-500">
                         <Card className="border-none shadow-none sm:border sm:shadow-sm">
                             <CardHeader className="space-y-1">
                                 <CardTitle className="text-2xl font-bold tracking-tight text-center">Create an account</CardTitle>
@@ -268,7 +263,7 @@ export default function RegisterPage() {
                                 </div>
                             </CardFooter>
                         </Card>
-                    </motion.div>
+                    </div>
                 </div>
             </div>
         </div>
