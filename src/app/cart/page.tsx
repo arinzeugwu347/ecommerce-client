@@ -34,23 +34,36 @@ export default function CartPage() {
 
     // Mutation for updating cart on backend
     const updateCartMutation = useMutation({
-        mutationFn: (updates: { productId: string; quantity: number }) =>
-            api.put(`/cart/${updates.productId}`, { quantity: updates.quantity }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["cart"] })
-            toast.success("Cart updated")
+        mutationFn: async (updates: { productId: string; quantity: number }) => {
+            if (!isAuthenticated) return; // Skip for guests
+            await api.put(`/cart/${updates.productId}`, { quantity: updates.quantity })
         },
-        onError: () => toast.error("Failed to update cart"),
+        onSuccess: () => {
+            if (isAuthenticated) {
+                queryClient.invalidateQueries({ queryKey: ["cart"] })
+                toast.success("Cart updated")
+            }
+        },
+        onError: () => {
+            if (isAuthenticated) toast.error("Failed to update cart")
+        },
     })
 
     // Mutation for removing item
     const removeItemMutation = useMutation({
-        mutationFn: (productId: string) => api.delete(`/cart/${productId}`),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["cart"] })
-            toast.success("Item removed")
+        mutationFn: async (productId: string) => {
+            if (!isAuthenticated) return; // Skip for guests
+            await api.delete(`/cart/${productId}`)
         },
-        onError: () => toast.error("Failed to remove item"),
+        onSuccess: () => {
+            if (isAuthenticated) {
+                queryClient.invalidateQueries({ queryKey: ["cart"] })
+                toast.success("Item removed")
+            }
+        },
+        onError: () => {
+            if (isAuthenticated) toast.error("Failed to remove item")
+        },
     })
 
     // Calculate subtotal - filter out items with missing products

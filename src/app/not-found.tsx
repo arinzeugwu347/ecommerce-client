@@ -6,7 +6,7 @@ import { Ghost, Home, ArrowLeft } from "lucide-react"
 
 export default function NotFound() {
     return (
-        <div className="container flex flex-col items-center justify-center min-h-[70vh] text-center px-4">
+        <div className="container flex flex-1 flex-col items-center justify-center text-center px-4">
             <div className="relative mb-8">
                 <Ghost className="h-24 w-24 text-muted-foreground/20 animate-bounce" />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-8xl font-bold opacity-10 select-none">

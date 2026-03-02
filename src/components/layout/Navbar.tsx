@@ -50,14 +50,15 @@ export default function Navbar() {
     const { data: backendCart } = useQuery({
         queryKey: ["cart", isAuthenticated],
         queryFn: () => api.get("/cart").then(res => res.data),
+        enabled: !!isAuthenticated && !!mounted, // Only fetch if authenticated and mounted
         staleTime: 1000 * 60 * 5,
     })
 
     useEffect(() => {
-        if (backendCart?.items && mounted) {
-            setCart(backendCart.items)
-        }
         if (isAuthenticated && mounted) {
+            if (backendCart?.items) {
+                setCart(backendCart.items)
+            }
             fetchWishlist()
         }
     }, [backendCart, setCart, mounted, isAuthenticated, fetchWishlist])

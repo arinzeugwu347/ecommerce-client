@@ -25,7 +25,7 @@ export default function RootLayout({
         <Providers>
           <div className="relative flex min-h-screen flex-col bg-background text-foreground">
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 flex flex-col">{children}</main>
             <Footer />
             <Toaster position="top-right" richColors closeButton />
           </div>

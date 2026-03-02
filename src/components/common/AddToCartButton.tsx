@@ -8,6 +8,7 @@ import { useCartStore } from "@/store/cartStore"
 import axios from "axios"
 import api from "@/lib/api"
 import { cn } from "@/lib/utils"
+import { useAuthStore } from "@/store/authStore"
 
 interface AddToCartButtonProps {
     product: {
@@ -48,8 +49,10 @@ export default function AddToCartButton({
                 priceAtAdd: product.price
             })
 
-            // Call backend
-            await api.post('/cart', { productId: product._id, quantity: 1 })
+            // Only call backend if authenticated
+            if (useAuthStore.getState().isAuthenticated) {
+                await api.post('/cart', { productId: product._id, quantity: 1 })
+            }
 
             toast.success("Added to cart", {
                 description: `${product.name} × 1`,
