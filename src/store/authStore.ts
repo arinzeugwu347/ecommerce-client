@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import api from "@/lib/api"
 import { useCartStore } from "./cartStore"
+import { useWishlistStore } from "./wishlistStore"
 
 export interface User {
     _id: string
@@ -78,6 +79,7 @@ export const useAuthStore = create<AuthState>()(
                 // Clear cart state on logout (or you might want to keep it if guest carts are allowed)
                 // For now, clearing it is safer to prevent user data leak to next guest
                 useCartStore.getState().clearCart()
+                useWishlistStore.getState().clearWishlist()
             },
 
             setError: (error) => set({ error }),
